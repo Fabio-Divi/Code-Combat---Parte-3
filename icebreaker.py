@@ -2,61 +2,75 @@ import random
 
 
 class Icebreaker:
+    VALID_TYPES = ("fracter", "decoder")
+
     def __init__(self, name: str, min_damage: int, max_damage: int, type: str):
-        # attributi privati
-        self.__name = name
+        self.__name = ""
+        self.__min_damage = 1
+        self.__max_damage = 1
+        self.__type = "fracter"
 
-        # validazione minima per i danni
-        if not isinstance(min_damage, int) or min_damage < 0:
-            print("ATTENZIONE: min_damage deve essere un intero non negativo, imposto a 0")
-            min_damage = 0
-        self.__min_damage = min_damage
+        self.name = name
+        self.min_damage = min_damage
+        self.max_damage = max_damage
+        self.type = type
 
-        if not isinstance(max_damage, int) or max_damage < self.__min_damage:
-            print("ATTENZIONE: max_damage deve essere un intero >= min_damage, imposto a min_damage")
-            max_damage = self.__min_damage
-        self.__max_damage = max_damage
-
-        if type not in ("fracter", "decoder"):
-            print("ATTENZIONE: type deve essere 'fracter' o 'decoder', imposto a 'fracter'")
-            self.__type = "fracter"
-        else:
-            self.__type = type
-
-    # getters
-    def get_name(self) -> str:
+    @property
+    def name(self) -> str:
         return self.__name
 
-    def get_min_damage(self) -> int:
+    @name.setter
+    def name(self, value: str) -> None:
+        if not isinstance(value, str) or value == "":
+            value = "icebreaker"
+        self.__name = value
+
+    @property
+    def min_damage(self) -> int:
         return self.__min_damage
 
-    def get_max_damage(self) -> int:
+    @min_damage.setter
+    def min_damage(self, value: int) -> None:
+        if not isinstance(value, int) or value < 1:
+            value = 1
+        self.__min_damage = value
+        if self.__max_damage < self.__min_damage:
+            self.__max_damage = self.__min_damage
+
+    @property
+    def max_damage(self) -> int:
         return self.__max_damage
 
-    def get_type(self) -> str:
+    @max_damage.setter
+    def max_damage(self, value: int) -> None:
+        if not isinstance(value, int) or value < self.__min_damage:
+            value = self.__min_damage
+        self.__max_damage = value
+
+    @property
+    def type(self) -> str:
         return self.__type
 
-    # setters con validazione
-    def set_min_damage(self, value: int) -> None:
-        if not isinstance(value, int) or value < 0:
-            print("ATTENZIONE: min_damage deve essere un intero non negativo")
-            return
-        if value > self.__max_damage:
-            print("ATTENZIONE: min_damage non può superare max_damage")
-            return
-        self.__min_damage = value
+    @type.setter
+    def type(self, value: str) -> None:
+        if value not in self.VALID_TYPES:
+            value = "fracter"
+        self.__type = value
 
-    def set_max_damage(self, value: int) -> None:
-        if not isinstance(value, int) or value < 0:
-            print("ATTENZIONE: max_damage deve essere un intero non negativo")
-            return
-        if value < self.__min_damage:
-            print("ATTENZIONE: max_damage non può essere minore di min_damage")
-            return
-        self.__max_damage = value
+    def get_name(self) -> str:
+        return self.name
+
+    def get_min_damage(self) -> int:
+        return self.min_damage
+
+    def get_max_damage(self) -> int:
+        return self.max_damage
+
+    def get_type(self) -> str:
+        return self.type
 
     def get_damage(self) -> int:
         return random.randint(self.__min_damage, self.__max_damage)
 
     def __str__(self) -> str:
-        return f"{self.__name} ({self.__type} {self.__min_damage}–{self.__max_damage} dmg)"
+        return f"{self.__name} ({self.__type} {self.__min_damage}-{self.__max_damage} dmg)"
